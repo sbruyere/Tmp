@@ -57,6 +57,21 @@ public class TrainTrainShould
     }
 
 
+    [Test]
+    public async Task Not_reserve_seats_when_it_exceed_max_coach_capacity_threshold_of_70_percents()
+    {
+        var fuzzer = new Fuzzer();
+        var (trainId, bookingReference) = FuzzTrainIdAndBookingReference(fuzzer);
+        const int seatsRequestedCount = 2;
+
+        var trainDataService = BuildTrainDataService(trainId, TrainTopology.With_2_coaches_and_8_seats_already_reserved_in_the_first_coach());
+        var bookingReferenceService = BuildBookingReferenceService(bookingReference);
+
+        var webTicketManager = new WebTicketManager(trainDataService, bookingReferenceService);
+        var reservation = await webTicketManager.Reserve(trainId, seatsRequestedCount);
+
+        Check.That(reservation).IsEqualTo($"{{\"train_id\": \"{trainId}\", \"booking_reference\": \"{bookingReference}\", \"seats\": [\"4B\", \"5B\"]}}");
+    }
     #region Helpers
 
     private static (string trainId, string bookingReference) FuzzTrainIdAndBookingReference(IFuzz fuzzer)

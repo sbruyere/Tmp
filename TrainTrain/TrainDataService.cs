@@ -66,7 +66,17 @@ public class TrainDataService : ITrainDataService
 
             seats.Append($"\"{s.SeatNumber}{s.CoachName}\"");
         }
+
         seats.Append("]");
+
+        var resultObj = new TrainModel()
+        {
+            train_id = trainId,
+            seats = seats,
+            bookingRef = bookingRef
+        };
+
+        //var result = Newtonsoft.Json.JsonConvert.SerializeObject(resultObj);
 
         var result = $"{{\r\n\t\"train_id\": \"{trainId}\",\r\n\t\"seats\": {seats},\r\n\t\"booking_reference\": \"{bookingRef}\"\r\n}}";
 
